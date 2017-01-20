@@ -1,0 +1,3 @@
+The first try on git!
+The first attempt to linking git and github!
+2017-01-20 written by alvinsjq

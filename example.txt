@@ -1,3 +1,4 @@
 The first try on git!——after my second change!
+So this is actually the third try!
 The first attempt to linking git and github!
-2017-01-21 written by alvinsjq
+2017-01-22 written by alvinsjq

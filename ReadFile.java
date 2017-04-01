@@ -9,7 +9,7 @@ public class ReadFile {
     public static final String CTG1="000";
     public static final String CTG2="110";
     public static final String CTG3="111";
-    public static int R[]=new int[24];
+    public static int R[]=new int[32];
     public static String allline[][]=new String[31][2];
     public static int PC = 128;
     public static File simulation = new File("simulation.txt");
@@ -44,7 +44,7 @@ public class ReadFile {
         String inst_opcode;
         int inst_loca1;//rs
         int inst_loca2;//rt
-        int inst_loca3;//rd or imme_value
+        int inst_loca3;//rd or imme_value or offset
         String category=bincode.substring(0,3);
         switch (category){
             case CTG1:
@@ -353,62 +353,68 @@ public class ReadFile {
             bufferedWriter.newLine();
 
             System.out.println("Registers");
+            bufferedWriter.write("Registers");
             bufferedWriter.newLine();
+
+
+            bufferedWriter.write("R00:\t");
+            for(int i=0;i<8;i++) bufferedWriter.write(R[i]+"\t");
+            bufferedWriter.newLine();
+            bufferedWriter.write("R08:\t");
+            for(int i=8;i<16;i++) bufferedWriter.write(R[i]+"\t");
+            bufferedWriter.newLine();
+            bufferedWriter.write("R16:\t");
+            for(int i=16;i<24;i++) bufferedWriter.write(R[i]+"\t");
+            bufferedWriter.newLine();
+            bufferedWriter.write("R24:\t");
+            for(int i=24;i<32;i++) bufferedWriter.write(R[i]+"\t");
+            bufferedWriter.newLine();
+            bufferedWriter.write("\n");
+
+
             for(int i=0;i<R.length;i++) {
-                if(i>0&&i%8==0) System.out.println();
+                if(i>0&&i%8==0) {
+                    System.out.println();
+                }
                 System.out.print(R[i]+" ");
             }
 
             System.out.println("\nData");
+            bufferedWriter.write("Data\t\n");
             int j=0,count;
             while(!disass_instruction(allline[j][1]).equals("BREAK")) j++;
             for(j=j+1,count=0;j<allline.length-1;j++,count++){
-                if(count>0&&count%8==0) System.out.println();
+                if(count==0) bufferedWriter.write("184:\t");
+                if(count==8) bufferedWriter.write("\n216:\t");
+                if(count>0&&count%8==0) {
+                    System.out.println();
+                    //bufferedWriter.write("\n");
+                }
                 // System.out.println("====>>>>"+allline[j][1]);
                 System.out.print(num_instruction(allline[j][1])+" ");
+                bufferedWriter.write(num_instruction(allline[j][1])+" \t");
 
             }
 
             System.out.println();
+            bufferedWriter.newLine();
+            bufferedWriter.write("\n");
 
-
+        bufferedWriter.close();
         }catch (Exception e){
             e.printStackTrace();
         }
 
-
-        System.out.println("--------------------");
-        System.out.println("Cycle:"+cycle+" "+address_pc+disass_instruction(bincode));
-        System.out.println();
-
-        System.out.println("Registers");
-        for(int i=0;i<R.length;i++) {
-            if(i>0&&i%8==0) System.out.println();
-            System.out.print(R[i]+" ");
-        }
-
-        System.out.println("\nData");
-        int j=0,count;
-        while(!disass_instruction(allline[j][1]).equals("BREAK")) j++;
-        for(j=j+1,count=0;j<allline.length-1;j++,count++){
-            if(count>0&&count%8==0) System.out.println();
-           // System.out.println("====>>>>"+allline[j][1]);
-            System.out.print(num_instruction(allline[j][1])+" ");
-
-        }
-
-        System.out.println();
-
     }
     public static void main(String[] args){
         String s = "";
-
         // here get source file
+        s=args[1];
         FileInputStream fileInputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader bufferedReader = null;
         try {
-            fileInputStream = new FileInputStream("/Users/alvin/Documents/coding/MIPSsim/sample.txt");
+            fileInputStream = new FileInputStream(s);
             inputStreamReader = new InputStreamReader(fileInputStream);
             bufferedReader = new BufferedReader(inputStreamReader);
             for(int i=0,insaddr=128;(s = bufferedReader.readLine())!= null;i++,insaddr+=4) {
